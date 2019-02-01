@@ -2,3 +2,5 @@ title: jkeuhlen
 # description: Blog for various programming design patterns, tutorials, or general ramblings
 theme: jekyll-theme-architect
 google_analytics: UA-133448148-1
+plugins:
+  - jekyll-feed
