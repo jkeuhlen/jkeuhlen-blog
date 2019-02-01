@@ -3,6 +3,7 @@ layout: post
 title: "Introduction to GHC Generics"
 date: 2019-01-28
 tags: haskell generics meta-programming
+id: 1
 ---
 ## What are Generics? 
 

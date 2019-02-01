@@ -3,6 +3,7 @@ layout: post
 title: "Pattern Matching Trick"
 date: 2019-01-29
 tags: haskell pattern-matching
+id: 2
 ---
 
 About a month ago, I stumbled into on odd case of pattern matching. I had a set of data types like the following:
