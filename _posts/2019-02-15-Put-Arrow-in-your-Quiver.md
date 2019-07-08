@@ -2,7 +2,7 @@
 layout: post
 title: "Put Arrow in your Quiver"
 date: 2019-02-15
-tags: haskell arrows introductions
+tags: haskell arrows introductions tutorials
 id: 3
 ---
 

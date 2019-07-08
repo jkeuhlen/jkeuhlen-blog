@@ -2,7 +2,8 @@
 layout: post
 title: "Introduction to GHC Generics"
 date: 2019-01-28
-tags: haskell generics meta-programming introductions
+updated: 2019-07-07
+tags: haskell generics meta-programming introductions tutorials
 id: 1
 ---
 ## What are Generics? 
@@ -12,7 +13,7 @@ GHC.Generics is a well supported library, included in base, that can be used to 
 [//]: # (Add more introduction on the typeclass definition)
  
 
-The following tutorial consists of examples which utilize GHC.Generics to create typeclasses that can provide information about the structure of a record type.
+The following tutorial consists of a few examples which utilize GHC.Generics to create typeclasses that can provide information about the structure of a record type.
 
 We'll create two type classes that are closely related. The first tells you how many fields exist in a record. The second tells you how many fields in a record contain a specific character.
 
