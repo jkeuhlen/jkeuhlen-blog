@@ -5,9 +5,6 @@ date: 2019-10-19
 tags: haskell ghcid
 id: 4
 ---
-## Pre-release post
-Hi! Thanks for finding this post so quickly. I'm still in the process of updating and refining it, so this isn't the final version. Please let me know if you find any issues. 
-
 # ghcid
 If you've been using [ghcid](https://github.com/ndmitchell/ghcid) to work on your haskell projects, you've probably come to love the quick response times to typechecking your programs and the green `All good` that tells you you've finally satisfied the compiler. 
 
@@ -17,12 +14,12 @@ One of my main issues with ghcid in the past has been the need to spin up a seco
 
 # What's new? 
 
-With a recent addition to ghcid, there's a new way to interactively play with code without having to have multiple windows open or jump back and forth between terminals. Remember, ghcid is, in essence, a wrapper over GHCi so it should be able to do everything GHCi can, especially typechecking, kind exploration, or running simple functions! 
+With a recent addition to ghcid, there's a new way to interactively play with code without having to have multiple windows open or jump back and forth between terminals. Remember, ghcid is a wrapper over GHCi so it should be able to do everything GHCi can, especially typechecking, kind exploration, or running simple functions! 
 
 Due to a random bit of feedback in slack, I ended up tagged on the PR and got to follow along with the development of this new flag.
 
 ## So what is it?
-New as of ghcid 0.7.5 is a new flag for starting the program:
+In the new release of ghcid, 0.7.5, there is a new flag for starting the program:
 `--allow-eval`. This allows the evaluation of arbitrary commands in your underlying GHCi instance.
 
 Top level comments in your code that start with `-- $>` will be picked up by this new flag and be executed against the loaded instance. 
@@ -99,5 +96,8 @@ This new flag also doesn't try to protect you from yourself (which is why the fe
 ```haskell
 -- $> :quit
 ```
-to anywhere in your code path. Then, as soon as ghcid evalutes the comment it will close the underlying GHCi session and quit. As you saw earlier, it can also evaluate arbitrary `IO` actions. 
+to anywhere in your code path. Then, as soon as ghcid evalutes the comment it will close the underlying GHCi session and quit. As you saw earlier, it can also evaluate arbitrary `IO` actions so make sure to avoid any irreversible actions.
+```
+-- $> launchTheNukes
+```
 
