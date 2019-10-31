@@ -122,7 +122,7 @@ f ||| g = \x -> case x of
                   Right r -> g r 
 first f = \(x,y) -> (f x, y)
 second g = \(x,y) -> (x, g y)
-f *** g - \(x,y) -> (f x, g y)
+f *** g = \(x,y) -> (f x, g y)
 ```
 
 These operators are used to simplify many pure functions to these shorter forms. 
