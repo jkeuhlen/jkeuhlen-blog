@@ -12,7 +12,7 @@ If you've been programming in Haskell long enough, one of the many truisms you'v
 For those unfamiliar with the concept, [green threads](https://en.wikipedia.org/wiki/Green_threads) are computational threads provided by the runtime environment, rather than the host operating system. Green threads are light weight and don't suffer from the same context switching penalties that host threads have. This benefit means it's extremely easy and efficient to abstract over multiple independent computations. There is a lot more that can be and [already](https://www.fpcomplete.com/blog/2017/01/green-threads-are-like-garbage-collection/) has been written about green threads in Haskell, but there is one less often written aspect: using them in production.
 
 > GHC’s user threads are lightweight; modern computers can run 100,000 user threads smoothly.
-> - https://www.aosabook.org/en/posa/warp.html
+> https://www.aosabook.org/en/posa/warp.html
 
 As Haskell developers, we are lucky that we don't have to worry about doing any extra work to handle thousands of requests concurrently. In other languages, there is often a lot of work that goes into system design to ensure similar levels of throughput.
 
