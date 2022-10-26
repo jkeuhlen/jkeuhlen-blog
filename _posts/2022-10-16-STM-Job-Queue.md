@@ -1,16 +1,15 @@
 ---
 layout: post
 title: "Practical STM: An Async Job Queue"
-date: 2022-10-16
+date: 2022-10-26
 tags: haskell STM
 id: 8
-published: false
+published: true
 ---
 
 # Software Transactional Memory (STM)
 
 In this post, we'll walk through a brief introduction to concurrency and one of Haskell's best tools for dealing with it: software transactional memory (STM). We'll then use STM to build a simple but powerful asynchronous job queue.
-
 ## What is a Job Queue
 
 I'm going to start off with a problem definition because I think it helps clarify when and why you might reach for a tool.
@@ -20,25 +19,7 @@ Maybe we know we're going to have a lot of expensive computations to make all at
 Maybe we only want to compute something once a day, and we want to wait and stack up all of our needs to send at a single time.  
 Whatever the case, we want to defer that action until later. We'll come back to this idea in a few minutes, but first let's side step into concurrency.
 
-## What STM is at the basic level
 
-Put as simply as I can STM provides way to have memory regions that have synchronization tools built in software (yes, there is a way to do _hardware_ transactional memory but that's beyond the scope of this post).
-
-From the paper [Software Transactional Memory by Shavit and Touitou](https://dl.acm.org/doi/pdf/10.1145/224964.224987):
-
-> A transaction is a finite sequence of local and shared memory machine instructions:
->   * Read_transactional - reads the value of a shared location into a local register.
->   * Write_transactional – stores the contents of a local register into a shared location.
-
-
-> Any transaction may either fail, or complete successfully, in which case its changes are visible atomically to other processes.
-
-`atomically` is an important word here, and you'll see it come up in the library and our example later as well. 
-
-Funnily enough, the best definition of multi-threaded atomic actions I've read is from the database book _Designing Data Intensive Applications_: 
-> if one thread executes an atomic operation, that means there is no way that another thread could see the half-finished result of the operation. The system can only be in the state it was before the operation or after the operation, not something in between.
-
-If you're starting to think in Haskell types, that means we define a function `atomically` which moves us from the specific context of STM actions in to IO in a single, uninteruptable step: `atomically :: STM a -> IO a`.
 
 ## Comparison to other multi-threading primitives like semaphore, mutex, and locks
 
@@ -54,15 +35,35 @@ First, as a point of differentiation. STM isn't a Haskell specific system - you 
 
 <img src="../assets/stmPost/stm_wikipedia.png" width="200" alt="Image showing stm implementations in many other programming languages like C,C++,C#,Clojure,etc"/>
 
-Knowing what other strategies exist can make it easier to continue reading, but I also think a breadth of knowledge in programming can help people know when to research more and at least have terms to lookup when they are working on a problem. For instance, knowing that STM is great and understanding when to apply a semaphore might lead you to discovering the [`TSem` library](https://hackage.haskell.org/package/stm-2.5.1.0/docs/Control-Concurrent-STM-TSem.html).
+Second, knowing what other strategies exist can make it easier to know what tool to reach for, but I also think a breadth of knowledge in programming can help people know when to research more and at least have terms to lookup when they are working on a problem. For instance, knowing that STM is great and understanding when to apply a semaphore might lead you to discovering the [`TSem` library](https://hackage.haskell.org/package/stm-2.5.1.0/docs/Control-Concurrent-STM-TSem.html).
 
-Second, you can still screw up STM code. It's not some panacea for concurrent programming. Though it makes things easier, it's still tricky code! Traditional tools for dealing with locks can be useful to orchestrate threads and debug them when something goes wrong.
+Third, you can still screw up STM code. It's not some panacea for concurrent programming. Though it makes things easier, it's still tricky code! Traditional tools for dealing with locks can be useful to orchestrate threads and debug them when something goes wrong.
 
-## Why STM is so much better
+## What STM is at the basic level
 
-Composibility is the winning feature of STM. Because both the programmer and the compiler can reason about individual blocks of code, we can more quickly write and more importantly understand concurrent programs.
+Put as simply as I can STM provides a way to have data which threads can transactionally access.
 
-Composibility is this fancy word that gets thrown around a lot, but I think it's not always obvious what people mean when they say it. In terms of STM programs, composibility is the ability to take two random pieces of STM code and combine them into a new single function without the risk of deadlocks:
+`Transactionally` there is a pretty important term, in the paper [Software Transactional Memory by Shavit and Touitou](https://dl.acm.org/doi/pdf/10.1145/224964.224987) they define it as:
+
+> A transaction is a finite sequence of local and shared memory machine instructions:
+>   * Read_transactional - reads the value of a shared location into a local register.
+>   * Write_transactional – stores the contents of a local register into a shared location.
+
+
+> Any transaction may either fail, or complete successfully, in which case its changes are visible atomically to other processes.
+
+`atomically` is an important word here, and you'll see it come up in the library and our example later as well. 
+
+Funnily enough, the best definition of multi-threaded atomic actions I've read is from the database book _Designing Data Intensive Applications_: 
+> if one thread executes an atomic operation, that means there is no way that another thread could see the half-finished result of the operation. The system can only be in the state it was before the operation or after the operation, not something in between.
+
+If you're starting to think in Haskell types, that means we define a function `atomically` which moves us from the specific context of STM actions in to IO in a single, uninterruptable step: `atomically :: STM a -> IO a`.
+
+## Why STM is so great
+
+Composability is the winning feature of STM. Because both the programmer and the compiler can reason about individual blocks of code, we can more quickly write and more importantly understand concurrent programs.
+
+Composability is this fancy word that gets thrown around a lot, but I think it's not always obvious what people mean when they say it. In terms of STM programs, composibility is the ability to take two random pieces of STM code and combine them into a new single function without the risk of deadlocks:
 ```haskell
 functionA :: STM a
 functionB :: STM a
@@ -89,6 +90,7 @@ Let's say that I'm running a garden center with a plant delivery business called
 
 Periodically, people will call me to get some plants delivered. I write down their order, and promise to deliver later that day. Once per day, I grab my list of orders, load up the truck, and go bring everyone their plants.
 
+In haskell, this could be expressed with the following CLI program.  
 ```haskell
 -- Single threaded processing.
 -- Orders come in one at a time, and if I'm not at my desk to take the order it isn't recorded. After making a delivery, I have to restart my process to keep working.
@@ -120,8 +122,7 @@ bullmooseGardenCenter1 = go []
 As it turns out, I love growing things and have the best selection of annual flowers around, so I get a _lot_ of business. All of the sudden, I find myself having to hire a dedicated delivery driver.
 When it's just me writing down the orders and then making the deliveries, I don't really have to worry about communication. But now, I need to make sure that when I write down orders, I know whether or not my delivery driver is already out on the road. In other words, I need to know if this order goes onto a current list for deliveries or a _new_ list for deliveries.
 
-As soon as we introduced the second worker, the system gets a whole lot more complicated.
-
+We can also write some code to reflect this challenge, and this will be our first use of STM. 
 ```haskell
 newOrderList :: IO (TMVar [String])
 newOrderList = newEmptyTMVarIO
@@ -197,31 +198,42 @@ bullmooseGardenCenter2ButWithABug = do
       atomically $ do
         list <- takeTMVar orderList
         putTMVar orderList (order:list)
+```
 
+This code seems pretty close to the previous version, but one important line is missing. That missing line will cause the forked thread to deadlock. When you try to run it, the GHC runtime is able to detect this deadlock, kill the thread, and give you an incredibly helpful error message. 
 
+```haskell
 -- ghci> bullmooseGardenCenter2
 -- abc
 -- def
 -- *** Exception: thread blocked indefinitely in an STM transaction
 ```
 
+Now, I know it doesn't look _that_ impressive. But after working with concurrent systems for awhile, I've gained to an immense appreciation for the fact that not only can GHC detect this deadlock it can specifically tell you that you're running in an STM transaction that gets stuck. 
+
+If you were trying to diff the previous sections, the bug here was not instantiatng the `TMVAR` with an empty list:
+```haskell
+  atomically $ putTMVar orderList []
+```
+The double "emptiness" of the TMVar and the list here often lead to me forgetting this step, so I get to see the `thread blocked indefinitely` error a fair amount.
+
 ---
 
 <img src="../assets/stmPost/bullmoosegarden3.png" width="200" alt="Second Dall-e image of a cartoon bull moose behind a sales counter" />
 
 
-But, let's assume I'm _really_ good at growing things (I'm not actually, but hey we can all dream right?) and my business explodes and all of the sudden I have one hundred delivery drivers and multiple people just working the phones to take orders. How am I going to orchestrate all of this?
+Next, let's assume I'm _really_ good at growing things (I'm not actually, but hey we can all dream right?) and my business explodes and all of the sudden I have one hundred delivery drivers and multiple people working the phones to take orders. How am I going to orchestrate all of this?
 
 There are a couple of important things to note in running a business like this:
 * I want to make sure that no order is fulfilled more than once.
-* I want to be sure that every order that's received is recorded quickly.
-* I want to make sure two delivery drivers don't get stuck trying to pick up the same order at the same time.
+* I want to be sure that every order that's received is recorded quickly. You can't have two people fighting over the order list trying to record their orders at the same time.
+* Similarly, I want to make sure two delivery drivers don't get stuck trying to pick up the same order at the same time.
 
-Okay that last one might be me just breaking through the analogy.
+Okay the analogy might be leaking through to our implementation here.
 
 Most programmers have a tool for this, but they might call it something different depending on where they learned it. With my background, I've always called this kind of work a "Job Queue". The simplest version is really easy to imagine, and equally trivial to build. We just have one system that writes instructions down, then executes them later. The complexity immediately jumps as soon as we have two different processes: one to write and one to read. Then, we have another jump in complexity when we have multiple processes reading and writing at the same time.
 
-Quickly, the right solution to your problem involves utilizing multithreading processing techniques. These often sound scary, but in haskell, it's really easy to deal with.
+Quickly, the right solution to your problem involves utilizing multithreading processing techniques. These often sound scary, but in haskell, it's much easier to deal with.
 
 ```haskell
 newOrderQueue :: IO (TQueue String)
@@ -283,7 +295,9 @@ bullmooseGardenEmpire = do
 
 --- 
 ## Aside 2
-example of bad stdout because of multithreaded access
+
+You may have noticed an extra bit of STM code in that previous section. If you take it out, here's what your stdout output looks like: 
+
 ```
 Driver 4 delivering: "compost"
 DriDDvrreiirvv ee8rr   d29e  lddieevlleiirvvieenrrgii:nn gg"::p  l""amfnultmo sws"et
@@ -295,6 +309,7 @@ DDrDririviveverer r 7 4 3 d dedelelilivivevereririningng:g: : " "s"memueumdmsss"
 Driver 1 delivering: "tools"
 ```
 
+STM is such an easy and powerful tool, I found myself, somewhat ironically, just reaching for it here to clean up my stdout output entirely separate from my motivating example of why STM is great! 
 
 ---
 
@@ -382,7 +397,7 @@ bullmooseGardenEmpire2 = do
 
 (You can get access to a full copy of the code in this post [here](https://gist.github.com/jkeuhlen/03a9005dfc9ce6d051c367f13546a7eb). There _might_ be a GHC extension or two missing - I built it locally with my normal set of extensions enabled.)
 
-
+(This post is a long-form version of a talk I gave at a Mercury hosted Haskell meetup in Portland on 2022-10-20)
 
 
 
