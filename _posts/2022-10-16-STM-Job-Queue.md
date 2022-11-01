@@ -33,7 +33,7 @@ I also read this again to remind myself of the differences:  https://stackoverfl
 I think it's important to call out these structures for a couple of reasons.  
 First, as a point of differentiation. STM isn't a Haskell specific system - you can find implementations in a bunch of other languages according to wikipedia.
 
-<img src="../assets/stmPost/stm_wikipedia.png" width="200" alt="Image showing stm implementations in many other programming languages like C,C++,C#,Clojure,etc"/>
+<img src="/assets/stmPost/stm_wikipedia.png" width="200" alt="Image showing stm implementations in many other programming languages like C,C++,C#,Clojure,etc"/>
 
 Second, knowing what other strategies exist can make it easier to know what tool to reach for, but I also think a breadth of knowledge in programming can help people know when to research more and at least have terms to lookup when they are working on a problem. For instance, knowing that STM is great and understanding when to apply a semaphore might lead you to discovering the [`TSem` library](https://hackage.haskell.org/package/stm-2.5.1.0/docs/Control-Concurrent-STM-TSem.html).
 
@@ -76,7 +76,7 @@ functionC = do
 
 I found this good example on [stackoverflow](https://stackoverflow.com/a/5518825/3806046) which illustrates further:
 
-![Screenshot of compose example from StackOverflow](../assets/stmPost/compose_example.png)
+![Screenshot of compose example from StackOverflow](/assets/stmPost/compose_example.png)
 
 Reading concurrent programs is one of the hardest skills. The real benefit is that any _other_ programmer can come through later and understand it faster than any concurrent code written in the other multi-threading styles.
 
@@ -86,7 +86,7 @@ With all of that said, let's move into the example I promised.
 ## Bullmoose Gardens 
 Let's say that I'm running a garden center with a plant delivery business called **Bullmoose Garden Center**.
 
-<img src="../assets/stmPost/bullmoosegarden.png" width="200" alt="Dall-e image of a cartoon bull moose behind a sales counter" />
+<img src="/assets/stmPost/bullmoosegarden.png" width="200" alt="Dall-e image of a cartoon bull moose behind a sales counter" />
 
 Periodically, people will call me to get some plants delivered. I write down their order, and promise to deliver later that day. Once per day, I grab my list of orders, load up the truck, and go bring everyone their plants.
 
@@ -116,7 +116,7 @@ bullmooseGardenCenter1 = go []
 ```
 ---
 
-<img src="../assets/stmPost/bullmoosegarden2.png" width="200" alt="Second Dall-e image of a cartoon bull moose behind a sales counter" />
+<img src="/assets/stmPost/bullmoosegarden2.png" width="200" alt="Second Dall-e image of a cartoon bull moose behind a sales counter" />
 
 
 As it turns out, I love growing things and have the best selection of annual flowers around, so I get a _lot_ of business. All of the sudden, I find myself having to hire a dedicated delivery driver.
@@ -219,7 +219,7 @@ The double "emptiness" of the TMVar and the list here often lead to me forgettin
 
 ---
 
-<img src="../assets/stmPost/bullmoosegarden3.png" width="200" alt="Second Dall-e image of a cartoon bull moose behind a sales counter" />
+<img src="/assets/stmPost/bullmoosegarden3.png" width="200" alt="Second Dall-e image of a cartoon bull moose behind a sales counter" />
 
 
 Next, let's assume I'm _really_ good at growing things (I'm not actually, but hey we can all dream right?) and my business explodes and all of the sudden I have one hundred delivery drivers and multiple people working the phones to take orders. How am I going to orchestrate all of this?
@@ -313,7 +313,7 @@ STM is such an easy and powerful tool, I found myself, somewhat ironically, just
 
 ---
 
-<img src="../assets/stmPost/bullmoosegarden4.png" width="200" alt="Second Dall-e image of a cartoon bull moose behind a sales counter" />
+<img src="/assets/stmPost/bullmoosegarden4.png" width="200" alt="Second Dall-e image of a cartoon bull moose behind a sales counter" />
 
 Last, let's showcase composability here with an example similar to the one from StackOverflow we looked at earlier. 
 
