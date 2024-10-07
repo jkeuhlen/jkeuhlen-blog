@@ -8,8 +8,8 @@ published: true
 ---
 
 <div class="callout callout-note">
-  <h4>Note</h4>
-  <p>This is the essay form of a talk I delivered for Mercury's Engineering Office Hours on 2024-09-27 — a weekly ~random discussion forum for our engineering team. </p>
+  <p class="callout-title">Note</p>
+  <p class="callout-content">This is the essay form of a talk I delivered for Mercury's Engineering Office Hours on 2024-09-27 — a weekly ~random discussion forum for our engineering team. </p>
   <p>If this resonates with you and you want to come work with us, check out mercury.com/jobs or reach out to me directly. </p>
 </div>
 
@@ -116,6 +116,6 @@ Leave the code better than you found it. Delete unnecessary functions you stumbl
 	2) Have less stuff; marie kondo up the codebase. 
 
 <div class="callout callout-note">
-  <h4>Note</h4>
-  <p>After this, we walked through a couple of examples of this in action that only really make sense with the context of Mercury's systems. The generally applicable approach is to ensure you both HAVE telemetry data for your systems and you actually look at it. </p>
+  <p class="callout-title">Note</p>
+  <p class="callout-content">After this, we walked through a couple of examples of this in action that only really make sense with the context of Mercury's systems. The generally applicable approach is to ensure you both HAVE telemetry data for your systems and you actually look at it. </p>
 </div>
