@@ -115,5 +115,7 @@ Leave the code better than you found it. Delete unnecessary functions you stumbl
 	1) Remove accretions that no longer serve us. Simplify endpoints. Spend the time to simplify to make future changes smoother and higher quality. 
 	2) Have less stuff; marie kondo up the codebase. 
 
-> [!NOTE]
-> After this, we walked through a couple of examples of this in action that only really make sense with the context of Mercury's systems. The generally applicable approach is to ensure you both HAVE telemetry data for your systems and you actually look at it. 
+<div class="callout callout-note">
+  <h4>Note</h4>
+  <p>After this, we walked through a couple of examples of this in action that only really make sense with the context of Mercury's systems. The generally applicable approach is to ensure you both HAVE telemetry data for your systems and you actually look at it. </p>
+</div>
