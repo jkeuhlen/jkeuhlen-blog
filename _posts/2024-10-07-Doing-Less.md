@@ -7,9 +7,11 @@ id: 10
 published: true
 ---
 
-> [!NOTE]
-> This is the essay form of a talk I delivered for Mercury's Engineering Office Hours on 2024-09-27 — a weekly ~random discussion forum for our engineering team. 
-> If this resonates with you and you want to come work with us, check out mercury.com/jobs or reach out to me directly. 
+<div class="callout callout-note">
+  <h4>Note</h4>
+  <p>This is the essay form of a talk I delivered for Mercury's Engineering Office Hours on 2024-09-27 — a weekly ~random discussion forum for our engineering team. </p>
+  <p>If this resonates with you and you want to come work with us, check out mercury.com/jobs or reach out to me directly. </p>
+</div>
 
 When I had my first programming job in college, I was lucky enough to have an old-school sys-admin and perl monk as my mentor; Tim taught me a lot of different things that continue to influence my work to this day. 
 
