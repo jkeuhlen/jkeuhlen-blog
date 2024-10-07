@@ -29,9 +29,9 @@ When you spend more time thinking about the problem, you get to understand those
 
 In this way, laziness is akin to being **observant**. So how can you be more observant? Some practical tips: 
 
-1) Run the app locally. Use the feature your customer would experience. 
-2) Poke around in prod on Mercury or MTS. Open the network tab. See what it does. See how long things take. Get a feel for what your end users experience every day. 
-3) Use honeycomb to get basic insights. 
+1) Run the app locally. Use the feature your customer would experience.  
+2) Poke around in prod on Mercury or MTS. Open the network tab. See what it does. See how long things take. Get a feel for what your end users experience every day.  
+3) Use honeycomb to get basic insights.  
 ### Lazy programmers are observant. Seek to understand the details within the boundaries of your system.
 
 > If you get into the mental habit of relating what you're reading to the basic underlying ideas being demonstrated, you gradually accumulate some wisdom. —Charlie Munger
@@ -97,10 +97,10 @@ Lazy systems help here. When each part of the system is doing the bare minimum, 
 
 As an example, most users don't want to see all 100,000 transactions on their account at once. At most, they want some metadata around the aggregate numbers and a selection of those transactions. Rather than return everything, we should just return the minimum needed to accomplish the high level task. 
 
-This makes our system more resilient in a couple of ways. 
-1) We'll spend less time in computing data that won't be used. 
-2) We'll spend less time passing large chunks of data around that users don't need. 
-3) We'll be able to avoid thundering herds of people requesting huge amounts of data at the same time. 
+This makes our system more resilient in a couple of ways.  
+1) We'll spend less time in computing data that won't be used.  
+2) We'll spend less time passing large chunks of data around that users don't need.  
+3) We'll be able to avoid thundering herds of people requesting huge amounts of data at the same time.  
 
 ### When at odds, prefer a lazy system over skipping work yourself. 
 
@@ -108,12 +108,12 @@ Leave the code better than you found it. Delete unnecessary functions you stumbl
 
 
 # Takeaways 
-1) Write less; read more. 
-	1) Set up personal alerts in honeycomb, poke around in prod, shadow a coworker, talk to a customer. 
-	2) Do less coding; build better product.
-2) Cut ruthlessly 
-	1) Remove accretions that no longer serve us. Simplify endpoints. Spend the time to simplify to make future changes smoother and higher quality. 
-	2) Have less stuff; marie kondo up the codebase. 
+1) Write less; read more.  
+	1) Set up personal alerts in honeycomb, poke around in prod, shadow a coworker, talk to a customer.  
+	2) Do less coding; build better product.  
+2) Cut ruthlessly  
+	1) Remove accretions that no longer serve us. Simplify endpoints. Spend the time to simplify to make future changes smoother and higher quality.  
+	2) Have less stuff; marie kondo up the codebase.  
 
 <div class="callout callout-note">
   <p class="callout-title">Note</p>
