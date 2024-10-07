@@ -7,7 +7,7 @@ id: 10
 published: true
 ---
 
-> [!info]
+> [!NOTE]
 > This is the essay form of a talk I delivered for Mercury's Engineering Office Hours on 2024-09-27 — a weekly ~random discussion forum for our engineering team. 
 > If this resonates with you and you want to come work with us, check out mercury.com/jobs or reach out to me directly. 
 
@@ -113,5 +113,5 @@ Leave the code better than you found it. Delete unnecessary functions you stumbl
 	1) Remove accretions that no longer serve us. Simplify endpoints. Spend the time to simplify to make future changes smoother and higher quality. 
 	2) Have less stuff; marie kondo up the codebase. 
 
-> [!info]
+> [!NOTE]
 > After this, we walked through a couple of examples of this in action that only really make sense with the context of Mercury's systems. The generally applicable approach is to ensure you both HAVE telemetry data for your systems and you actually look at it. 
