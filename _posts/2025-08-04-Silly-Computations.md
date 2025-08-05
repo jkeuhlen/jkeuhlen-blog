@@ -86,7 +86,7 @@ getCachedOrganization orgId = do
 
 (`cachedBy`'s particular implementation is less interesting though it's fairly straightforward to build on top of Yesod's specific cache or to make your own within your `Handler` monad.)
 
-This allows us to share the results of database lookups within a single request across the lifecycle of the request. Without it, there's really no way to share data between your middleware and your handler contexts. 
+This allows us to share the results of database lookups across the lifecycle of a single request. Without it, there's really no way (within Yesod's framework) to share data between your middleware and your handler contexts. 
 
 ### 2. Just Pass the Whole Thing
 
@@ -96,11 +96,39 @@ If you fetch the `Organization` early, just pass the whole entity through the st
 
 This might feel wasteful. Isn’t it inefficient to keep passing data we don’t use?
 
-Not really. Haskell is lazy. If no one touches the data, it won’t be evaluated. And compared to a full DB round-trip and deserialization, the overhead is tiny.
+Not really. Haskell is lazy. If no one touches the data, it won’t be evaluated. And compared to the costs of a database round-trip, the overhead is tiny.
 
-More importantly, it prevents a common failure mode: someone changes a feature to need more fields, doesn’t see the data is already available, and adds a fresh DB call. We see this constantly.
+More importantly, it prevents a common failure mode: someone changes a feature to need more fields, doesn’t see the data is already available, and adds a fresh DB call. 
 
 Passing the entity makes the cost of that data **obvious** and **free**. It's much easier to see a duplicate call when you already have the results in context (and since we often name things similarly, e.g. `org` or `orgId`, the compiler will warn you too!)
+
+To reuse the time example from earlier: 
+
+```haskell
+getTheTime :: IO UTCTime
+getTheTime = do
+  time <- getCurrentTime
+  return time
+
+
+getTheWeather :: UTCTime -> IO Weather
+getTheWeather time = do
+  weather <- getWeatherAtTime time
+  return weather
+
+doSomethingElse :: IO ()
+doSomethingElse = do
+  time <- getTheTime
+  weather <- getTheWeather time
+  return (time, weather)
+
+main :: IO ()
+main = do 
+  (time, weather) <- doSomethingElse
+  liftIO $ putStrLn $ show "The weather at " ++ show time ++ " was " ++ show weather
+```
+
+The fact the `getTheWeather` depends on time is now obvious (it's passed into the function!) and easy to avoid duplicating the expensive IO action.
 
 ## Functional Core, Imperative Shell
 
