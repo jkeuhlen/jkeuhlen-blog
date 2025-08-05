@@ -49,7 +49,7 @@ main = do
 
 From looking at `main` alone, it's not obvious we're performing the same computation twice. Similarly, just looking at `doSomethingElse`, it’s not clear we’re fetching the time twice. Now imagine five, six, or ten layers deep.
 
-Most often, I've been seeing this problem creep in with database lookups.
+Most often, I've been seeing this problem creep in with database lookups, but the same pattern applies to any IO-like computation; especially those that require interacting with another system, process, or service. 
 
 ## Database Costs
 
