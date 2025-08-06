@@ -67,7 +67,7 @@ Now, given the specific organization ID, multiple portions of this request handl
 - Deserialize it on our backend 
 - Parse it into a Haskell data type
 
-Each of these blocks takes around 1-3ms every time it happens. In a standard application, we might do this 3-5 times per request given the flow I described above. Specifically with Yesod, the various contexts are disconnected from each other. Requests that you made in your authorization checks are disconnected from the ones you make in your handler. Then, within the application logic there are infinite opportunities for silly work, especially when multiple engineers are operating on the same codebase every day. 
+Each of these blocks takes around 1-3ms every time it happens. In a standard application, we might do this 3-5 times per request given the flow I described above. Specifically with Yesod, the various contexts are disconnected from each other. Requests that you made in your authorization checks are disconnected from the ones you make in your handler or from requests made in your other middlewares. Then, within the application logic there are infinite opportunities for silly work, especially when multiple engineers are operating on the same codebase every day. In larger systems, this duplication can compound quickly from otherwise reasonable operations.
 
 ## Two Solutions
 
