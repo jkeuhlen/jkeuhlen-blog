@@ -7,9 +7,9 @@ id: 12
 published: true
 ---
 
-Lately I’ve been doing a lot of performance work at Mercury, and I keep running into the same kind of problems. I call them **silly computations**.
+Lately I've been doing a lot of performance work at Mercury, and I keep running into the same kind of problems. I call them **silly computations**.
 
-These are computations that aren't just unnecessary; they’re **obviously duplicative**. They're the kind of thing where when it's laid out directly, it's immediately obvious that it’s a waste. 
+These are computations that aren't just unnecessary; they're **obviously duplicative**. They're the kind of thing where when it's laid out directly, it's immediately obvious that it's a waste. 
 
 Think: 
 ```haskell
@@ -20,7 +20,7 @@ getTheTime = do
   return time
 ```
 
-When you're working on a single function, it’s easy to see the duplication. But when it’s spread across a call stack, it’s not always obvious.
+When you're working on a single function, it's easy to see the duplication. But when it's spread across a call stack, it's not always obvious.
 
 ```haskell
 getTheTime :: IO UTCTime
@@ -35,25 +35,25 @@ getTheWeather = do
   weather <- getWeatherAtTime time
   return weather
 
-doSomethingElse :: IO ()
-doSomethingElse = do
+getTimeAndWeather :: IO (UTCTime, Weather)
+getTimeAndWeather = do
   weather <- getTheWeather
   time <- getTheTime
   return (time, weather)
 
 main :: IO ()
 main = do 
-  (time, weather) <- doSomethingElse
-  liftIO $ putStrLn $ show "The weather at " ++ show time ++ " was " ++ show weather
+  (time, weather) <- getTimeAndWeather
+  putStrLn $ "The weather at " <> tshow time <> " was " <> tshow weather
 ```
 
-From looking at `main` alone, it's not obvious we're performing the same computation twice. Similarly, just looking at `doSomethingElse`, it’s not clear we’re fetching the time twice. Now imagine five, six, or ten layers deep.
+From looking at `main` alone, it's not obvious we're performing the same computation twice. Similarly, just looking at `getTimeAndWeather`, it's not clear we're fetching the time twice. Now imagine five, six, or ten layers deep.
 
 Most often, I've been seeing this problem creep in with database lookups, but the same pattern applies to any IO-like computation; especially those that require interacting with another system, process, or service. 
 
 ## Database Costs
 
-Let’s say a request comes in to our backend at `/organizations/:orgId`. 
+Let's say a request comes in to our backend at `/organizations/#OrganizationId`. 
 For a Yesod-backed application like ours, the processing of the request looks something like this:
 - First, run any pre-request middleware actions.
   - In these, authorization checks are common and we'll want to ensure the current user has access to the organization specified in the URI. 
@@ -63,11 +63,11 @@ For a Yesod-backed application like ours, the processing of the request looks so
 Now, given the specific organization ID, multiple portions of this request handling might want access to the full `Entity Organization`. Every time we fetch those details we: 
 - `select * from organizations where id = ?`
 - Serialize the response object on our database
-- Transmit it over the network.
+- Transmit it over the network
 - Deserialize it on our backend 
-- Parse it into a Haskell data type.
+- Parse it into a Haskell data type
 
-Each of these blocks takes around 1-3ms every time it happens. In a well-built application, we might do this 3-5 times per request given the flow I described above. Specifically with Yesod, the various contexts are disconnected from each other. Requests that you made in your authorization checks are disconnected from the ones you make in your handler. Then, within the application logic there are infinite opportunities for silly work, especially when multiple engineers are operating on the same codebase every day. 
+Each of these blocks takes around 1-3ms every time it happens. In a standard application, we might do this 3-5 times per request given the flow I described above. Specifically with Yesod, the various contexts are disconnected from each other. Requests that you made in your authorization checks are disconnected from the ones you make in your handler. Then, within the application logic there are infinite opportunities for silly work, especially when multiple engineers are operating on the same codebase every day. 
 
 ## Two Solutions
 
@@ -75,7 +75,7 @@ There are two broad ways I've found to mitigate these silly computations.
 
 ### 1. Per-request Caching
 
-We use Yesod’s built-in per-request cache. 
+We use Yesod's built-in per-request cache. 
 
 ```haskell
 getCachedOrganization :: OrganizationId -> Handler (Maybe Organization)
@@ -84,21 +84,21 @@ getCachedOrganization orgId = do
   cachedBy bytes (runDB . get $ orgId)
 ``` 
 
-(`cachedBy`'s particular implementation is less interesting though it's fairly straightforward to build on top of Yesod's specific cache or to make your own within your `Handler` monad.)
+(`cachedBy`'s particular implementation is left to the reader. It's fairly straightforward to build on top of Yesod's specific cache or to make your own within your `Handler`.)
 
 This allows us to share the results of database lookups across the lifecycle of a single request. Without it, there's really no way (within Yesod's framework) to share data between your middleware and your handler contexts. 
 
 ### 2. Just Pass the Whole Thing
 
-The simpler fix, and the one I wish we’d use more, is: **stop throwing away the result.**
+The simpler fix, and the one I wish we'd use more, is: **stop throwing away the result.**
 
 If you fetch the `Organization` early, just pass the whole entity through the stack. Even if some functions only use the ID, or ignore it entirely.
 
-This might feel wasteful. Isn’t it inefficient to keep passing data we don’t use?
+This might feel wasteful. Isn't it inefficient to keep passing data we don't use?
 
-Not really. Haskell is lazy. If no one touches the data, it won’t be evaluated. And compared to the costs of a database round-trip, the overhead is tiny.
+Not really. Haskell is lazy. If no one touches the data, it won't be evaluated. And compared to the costs of a database round-trip, the overhead is tiny.
 
-More importantly, it prevents a common failure mode: someone changes a feature to need more fields, doesn’t see the data is already available, and adds a fresh DB call. 
+More importantly, it prevents a common failure mode: someone changes a feature to need more fields, doesn't see the data is already available, and adds a fresh database call. 
 
 Passing the entity makes the cost of that data **obvious** and **free**. It's much easier to see a duplicate call when you already have the results in context (and since we often name things similarly, e.g. `org` or `orgId`, the compiler will warn you too!)
 
@@ -110,32 +110,31 @@ getTheTime = do
   time <- getCurrentTime
   return time
 
-
 getTheWeather :: UTCTime -> IO Weather
 getTheWeather time = do
   weather <- getWeatherAtTime time
   return weather
 
-doSomethingElse :: IO ()
-doSomethingElse = do
+getTimeAndWeather :: IO (UTCTime, Weather)
+getTimeAndWeather = do
   time <- getTheTime
   weather <- getTheWeather time
   return (time, weather)
 
 main :: IO ()
 main = do 
-  (time, weather) <- doSomethingElse
-  liftIO $ putStrLn $ show "The weather at " ++ show time ++ " was " ++ show weather
+  (time, weather) <- getTimeAndWeather
+  putStrLn $ "The weather at " <> tshow time <> " was " <> tshow weather
 ```
 
-The fact the `getTheWeather` depends on time is now obvious (it's passed into the function!) and easy to avoid duplicating the expensive IO action.
+The fact that `getTheWeather` depends on time is now obvious (it's passed into the function!) and easy to avoid duplicating the IO action.
 
 ## Functional Core, Imperative Shell
 
 This all fits into the broader design philosophy of **Functional Core, Imperative Shell** which is a pithy idea I heard [a long time ago](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell) which is only recently starting to make more sense to me. 
 
-The outer layers of your system should deal with as many side effects as it can: HTTP, database IO, caching. That’s where you pull in data, validate sessions, perform checks.
+The outer layers of your system should deal with as many side effects as it can: HTTP, database IO, caching. That's where you pull in data, validate sessions, perform checks.
 
 The core should be pure and testable. To keep it that way, **pull in everything you need early**, and **pass it through**.
 
-That means fewer lookups, fewer surprises, and better overall performance. And most importantly: **less silly work.**
+That means fewer lookups, fewer surprises, and better overall performance. And most importantly: **fewer silly computations.**
