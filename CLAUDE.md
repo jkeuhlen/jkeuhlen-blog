@@ -4,27 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Jekyll-based personal blog hosted on GitHub Pages. The site uses the `jekyll-theme-architect` theme and publishes programming tutorials, design patterns, and technical essays.
+This is a Jekyll-based personal blog hosted on GitHub Pages. The site uses a custom "Field Notes" design (no Jekyll theme) and publishes programming tutorials, design patterns, and technical essays.
 
 ## Commands
 
 ### Local Development
 ```bash
-# Install Jekyll and dependencies
-gem install jekyll bundler
+# The Gemfile pins the github-pages gem, which needs Ruby 3.x (not Ruby 4).
+# Homebrew: brew install ruby@3.3
+export PATH="/opt/homebrew/opt/ruby@3.3/bin:$PATH"
+bundle config set --local path vendor/bundle
 bundle install
 
-# Serve the site locally (if Gemfile exists)
-bundle exec jekyll serve
-
-# Alternative if no Gemfile
-jekyll serve
+# Serve the site locally
+bundle exec jekyll serve --livereload
 ```
 
 ### Building
 ```bash
 # Build the site for production
-jekyll build
+bundle exec jekyll build
 ```
 
 ## Architecture
@@ -34,25 +33,28 @@ jekyll build
   - Posts follow naming convention: `YYYY-MM-DD-title.md`
   - Front matter includes: layout, title, date, tags, id, published
 - `_layouts/`: Jekyll templates
-  - `default.html`: Base layout with navigation, Google Analytics
-  - `post.html`: Blog post layout with date and metadata
+  - `default.html`: Base layout with top nav, dark-mode toggle, footer
+  - `post.html`: Blog post layout with date, reading time, tags, prev/next links
+- `_includes/`: Footer SVGs (`moose.svg`, `pines.svg`)
 - `assets/`: Static files (CSS, images)
-  - `assets/css/custom.css`: Custom styles for callout boxes
-  - Post-specific images in subdirectories (e.g., `stmPost/`)
+  - `assets/css/style.scss`: All site styles (light/dark tokens, syntax highlighting, callouts)
+  - `assets/js/site.js`: Dark-mode toggle
+  - `assets/img/topo.svg`: Header topographic background
+  - Post-specific images in subdirectories (e.g., `stmPost/`, `scottyPost/`)
 - `exampleCode/`: Code examples referenced in blog posts (e.g., Haskell STM examples)
 
 ### Configuration
 - `_config.yml`: Jekyll configuration
   - Site title: "jkeuhlen" 
-  - Theme: jekyll-theme-architect
-  - Google Analytics tracking enabled
-  - Jekyll-feed plugin for RSS
+  - No theme; plugins: jekyll-feed (RSS), jekyll-seo-tag
+  - No analytics
 
 ### Content Structure
 - Posts cover programming topics (Haskell, STM, web servers, etc.)
 - Example code is stored in `exampleCode/` and referenced in posts
-- Custom CSS provides styled callout boxes for notes/warnings
-- Navigation includes: Home, About, Blog, Talks, Contact
+- Callouts: `<div class="callout callout-note|callout-warning|callout-danger">` with a `callout-title` paragraph
+- Optional `description:` front matter overrides the home-page excerpt
+- Navigation includes: Writing, Projects, Topics, About, Talks, Contact
 
 ### Hosting
 - Deployed via GitHub Pages

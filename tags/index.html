@@ -1,21 +1,32 @@
 ---
 layout: default
-title: Posts by Topic
+title: Topics
 ---
-<h1>Posts by Topic</h1>
-  <h5><a href=/blog>View chronologically</a> </h5> 
-{% capture tags %}
-  {% for tag in site.tags %}
-    {{ tag[0] }}
-  {% endfor %}
-{% endcapture %}
-{% assign sortedtags = tags | split:' ' | sort %}
+<header class="page-head">
+  <span class="eyebrow">Archive</span>
+  <h1>Topics</h1>
+  <p>Posts grouped by what they're about. Prefer <a href="{{ '/blog/' | relative_url }}">chronological</a>?</p>
+</header>
 
-{% for tag in sortedtags %}
-  <h3 id="{{ tag }}">{{ tag }}</h3>
-  <ul>
-  {% for post in site.tags[tag] %}
-    <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+{% capture tag_names %}{% for tag in site.tags %}{{ tag[0] }}{% unless forloop.last %}|{% endunless %}{% endfor %}{% endcapture %}
+{% assign sorted_tags = tag_names | split: "|" | sort_natural %}
+
+<ul class="tags tag-index" aria-label="All topics">
+  {% for tag in sorted_tags %}
+  <li><a href="#{{ tag | slugify }}">{{ tag }}<span class="count">{{ site.tags[tag].size }}</span></a></li>
   {% endfor %}
+</ul>
+
+{% for tag in sorted_tags %}
+<section class="tag-group">
+  <h2 id="{{ tag | slugify }}"><span class="hash">#</span>{{ tag }}</h2>
+  <ul class="archive">
+    {% for post in site.tags[tag] %}
+    <li>
+      <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %Y" }}</time>
+      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    </li>
+    {% endfor %}
   </ul>
+</section>
 {% endfor %}

@@ -1,0 +1,27 @@
+<svg class="footer-icon moose" aria-hidden="true" focusable="false" viewBox="0 0 110 84" xmlns="http://www.w3.org/2000/svg" fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <!-- far legs (drawn first, slightly lighter) -->
+  <g stroke-width="4.5" opacity=".7">
+    <line x1="30" y1="50" x2="30" y2="80"/>
+    <line x1="66" y1="50" x2="66" y2="80"/>
+  </g>
+  <!-- body with shoulder hump -->
+  <path stroke-width="1" d="M18 42 C16 35 21 31 30 31 C40 30 48 27 55 21 C61 17 67 19 68 25 C69 31 68 40 66 47 C63 51 57 51 52 50 C44 49 36 50 29 50 C22 50 19 47 18 42 Z"/>
+  <!-- tail -->
+  <path stroke-width="2.5" fill="none" d="M19 37 C16 38 15 40 15 43"/>
+  <!-- neck and drooping head -->
+  <path stroke-width="1" d="M60 22 C66 20 72 22 78 26 L91 34 C95 36 97 39 96 42 C95 45 91 45 88 44 L80 42 C76 41 72 40 67 38 Z"/>
+  <!-- bell (dewlap) -->
+  <path stroke-width="1" d="M78 41 C78 45 78 49 76 52 C75 49 74 45 74 41 Z"/>
+  <!-- ear -->
+  <path stroke-width="1" d="M75 25 L71 19 L78 23 Z"/>
+  <!-- palmate antlers -->
+  <path stroke-width="1" d="M77 24 C76 18 72 13 66 11 L64 6 L68 9 L69 4 L72 9 L75 3 L76 10 L80 5 L80 13 C81 17 80 21 79 24 Z"/>
+  <path stroke-width="1" d="M80 25 C83 19 88 16 94 15 L97 10 L97 15 L101 11 L100 17 L105 15 L102 20 C97 23 90 23 82 27 Z"/>
+  <!-- eye (cut out) -->
+  <circle class="moose-eye" cx="84" cy="32" r="1.1" stroke="none"/>
+  <!-- near legs -->
+  <g stroke-width="5">
+    <line x1="24" y1="50" x2="24" y2="80"/>
+    <line x1="60" y1="50" x2="60" y2="80"/>
+  </g>
+</svg>

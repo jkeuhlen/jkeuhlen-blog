@@ -1,7 +1,21 @@
 title: jkeuhlen
-# description: Blog for various programming design patterns, tutorials, or general ramblings
-theme: jekyll-theme-architect
-google_analytics: UA-133448148-1
+description: Field notes on Haskell, building software, and whatever else I'm chewing on.
+author: Jake Keuhlen
 url: https://jkeuhlen.com
+lang: en-US
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+
+exclude:
+  - CLAUDE.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor

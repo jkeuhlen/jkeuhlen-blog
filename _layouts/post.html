@@ -1,16 +1,35 @@
 ---
 layout: default
 ---
-<h1>{{ page.title }}</h1>
-<span class="meta">
-    {{ page.date | date_to_string }}
+{% assign words = content | number_of_words %}
+{% assign minutes = words | divided_by: 220 | at_least: 1 %}
+<article class="post">
+	<header class="post-header">
+		<p class="eyebrow">
+			<time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+			<span aria-hidden="true">·</span> {{ minutes }} min read
+		</p>
+		<h1 class="post-title">{{ page.title }}</h1>
+		{% if page.updated %}
+		<p class="updated">Last updated <time datetime="{{ page.updated | date_to_xmlschema }}">{{ page.updated | date: "%B %-d, %Y" }}</time></p>
+		{% endif %}
+		{% if page.tags.size > 0 %}
+		<ul class="tags" aria-label="Topics">
+			{% for tag in page.tags %}<li><a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}">{{ tag }}</a></li>{% endfor %}
+		</ul>
+		{% endif %}
+	</header>
 
-    {% if page.updated != null %}
-    <br>
-    <small><i>last updated {{ page.updated | date_to_string }}</i></small>
-    {% endif %}
-</span>
+	<div class="prose">
+		{{ content }}
+	</div>
 
-<div class="post">
-    {{ content }}
-</div>
+	<nav class="post-pager" aria-label="More posts">
+		{% if page.previous %}
+		<a class="prev" href="{{ page.previous.url | relative_url }}"><span class="eyebrow">← Older</span>{{ page.previous.title }}</a>
+		{% else %}<span></span>{% endif %}
+		{% if page.next %}
+		<a class="next" href="{{ page.next.url | relative_url }}"><span class="eyebrow">Newer →</span>{{ page.next.title }}</a>
+		{% endif %}
+	</nav>
+</article>

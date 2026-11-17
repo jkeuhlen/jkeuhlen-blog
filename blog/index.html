@@ -1,13 +1,22 @@
 ---
 layout: default
-title: Blog
+title: Writing
 ---
-  <h1>Chronological Posts</h1>
-    <h5><a href=/tags>View by topic</a></h5>
-  <ul class="posts">
-  
-    {% for post in site.posts %}
-    <li><span>{{ post.date | date_to_string }}</span> » <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title
-        }}</a></li>
-    {% endfor %}
-  </ul>
+<header class="page-head">
+  <span class="eyebrow">Archive</span>
+  <h1>Writing</h1>
+  <p>Everything, newest first. Prefer to browse <a href="{{ '/tags/' | relative_url }}">by topic</a>?</p>
+</header>
+
+{% assign by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+{% for year in by_year %}
+<h2 class="archive-year">{{ year.name }}</h2>
+<ul class="archive">
+  {% for post in year.items %}
+  <li>
+    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d" }}</time>
+    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endfor %}

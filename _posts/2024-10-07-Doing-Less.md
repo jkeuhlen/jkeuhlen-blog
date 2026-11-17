@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Doing Less"
+description: "Good programmers are lazy. Stop doing as your first line of action, spend more time thinking about your problem space, then do the smallest possible thing to move the needle."
 date: 2024-10-07
 tags: programming engineering
 id: 10
